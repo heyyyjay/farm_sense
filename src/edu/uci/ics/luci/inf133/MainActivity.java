@@ -33,17 +33,21 @@ public class MainActivity extends Activity {
     private float rotationLogZ;
     private float rotationLogScalar;
     
-    private float[] myArray;
+   // private float[] myArray;
 	
-    private void updateUI() {
+    private void updateUI(final CharSequence newText) {
     	runOnUiThread(new Runnable(){
 
 			@Override
 			public void run() {
-				xView.setText("X ROTATION: " + rotationLogX);
-				yView.setText("Y ROTATION: " + rotationLogY);
-				zView.setText("Z ROTATION: " + rotationLogZ);
-				//scalarView.setText("SCALAR ROTATION: " + rotationLogScalar);
+				
+				xView.setText(newText);
+				
+				
+				// xView.setText("X ROTATION: " + rotationLogX);
+				// yView.setText("Y ROTATION: " + rotationLogY);
+				// zView.setText("Z ROTATION: " + rotationLogZ);
+				// scalarView.setText("SCALAR ROTATION: " + rotationLogScalar);
 			}
     		
     	});
@@ -77,7 +81,7 @@ public class MainActivity extends Activity {
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         
         
-        myArray = new float[16];
+        // myArray = new float[16];
         
         mEventListenerRotation = new SensorEventListener() {
 			
@@ -92,7 +96,22 @@ public class MainActivity extends Activity {
 		        rotationLogY = event.values[1];
 		        rotationLogZ = event.values[2];
 		        //rotationLogScalar = event.values[3];
-		        updateUI();
+		        
+		        if (rotationLogX < 0 && rotationLogY < 0 && rotationLogZ < 0) {
+		        	updateUI("LEFT");
+		        }
+		        else if (rotationLogX >= 0 && rotationLogY < 0 && rotationLogZ < 0){
+		        	updateUI("DOWN");
+		        }
+		        else if (rotationLogX < 0 && rotationLogY >= 0 && rotationLogZ < 0){
+		        	updateUI("UP");
+		        }
+		        else if (rotationLogZ > 0) {
+		        	updateUI("UPSIDE-DOWN");
+		        }
+		        else {
+		        	updateUI("at rest");
+		        }
 			}
 			
 			@Override
@@ -109,7 +128,7 @@ public class MainActivity extends Activity {
 		super.onResume();
 		mSensorManager.registerListener(mEventListenerRotation,
 				mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-				SensorManager.SENSOR_DELAY_FASTEST);
+				SensorManager.SENSOR_DELAY_NORMAL);
 	}
 	
 	@Override
