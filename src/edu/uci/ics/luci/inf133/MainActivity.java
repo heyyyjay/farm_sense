@@ -45,6 +45,7 @@ public class MainActivity extends Activity {
     private AssetFileDescriptor afdRght;
     private AssetFileDescriptor afdUpsideDown;
     
+    // Plays audio  depending on the asset file descriptor passed in
     synchronized void playAudio(AssetFileDescriptor afd) {
     	if(mp.isPlaying()){
     		return;
@@ -60,8 +61,8 @@ public class MainActivity extends Activity {
     	mp.start();
     }
     
-   // private float[] myArray;
-	
+
+    // Changes the UI whenever the phone sensor registers a new event
     private void updateUI(final CharSequence newText) {
     	runOnUiThread(new Runnable(){
 
@@ -70,11 +71,9 @@ public class MainActivity extends Activity {
 				
 				currentState.setText(newText);
 				
-				
 				xView.setText("X ROTATION: " + rotationLogX);
 				yView.setText("Y ROTATION: " + rotationLogY);
 				zView.setText("Z ROTATION: " + rotationLogZ);
-				//scalarView.setText("SCALAR ROTATION: " + rotationLogScalar);
 			}
     		
     	});
@@ -96,61 +95,54 @@ public class MainActivity extends Activity {
         
     	mp = new MediaPlayer();
 
+    	// Store sound for each orientation
     	afdUp = getApplicationContext().getResources().openRawResourceFd(R.raw.cow);
     	afdDwn = getApplicationContext().getResources().openRawResourceFd(R.raw.goat);
     	afdLft = getApplicationContext().getResources().openRawResourceFd(R.raw.dog);
     	afdRght = getApplicationContext().getResources().openRawResourceFd(R.raw.duck);
     	afdUpsideDown = getApplicationContext().getResources().openRawResourceFd(R.raw.rooster);
-    	
-        
-        
-        // myArray = new float[16];
         
         mEventListenerRotation = new SensorEventListener() {
 			
+        	// Play audio depending on orientation of phone, calculated by the sensor event values x, y, and z
 			@SuppressLint("NewApi")
 			@Override
 			public void onSensorChanged(SensorEvent event) {
-				//float[] values = event.values;
-				//rotationValue = values[]
-
-		        //SensorManager.getRotationMatrixFromVector(myArray, event.values);
 		        rotationLogX = event.values[0];
 		        rotationLogY = event.values[1];
 		        rotationLogZ = event.values[2];
-		        //rotationLogScalar = event.values[3];
 
-		        if (	(rotationLogX < -0.7  || rotationLogX > .7)		&&
-		        		(rotationLogY < -0.56 || rotationLogY > 0.56)	&&
+		        if (	(rotationLogX < -0.65  || rotationLogX > .8) &&
+		        		(rotationLogY < -0.56 || rotationLogY > 0.4) && 
 		        		(rotationLogZ < -0.15 || rotationLogZ > 0.15)
 		        	) {
 		        	updateUI("UPSIDE-DOWN");
 		        	playAudio(afdUpsideDown);
 		        }
-		        else if (	rotationLogX < -0.32 && rotationLogX > -0.63 &&
-		        			rotationLogY < -0.2 && rotationLogY > -0.27 &&
+		        else if (	rotationLogX < -0.2 && rotationLogX > -0.6 &&
+		        			rotationLogY < -0.1 && rotationLogY > -0.2 &&
 		        			rotationLogZ > -0.7
 		        		) {
 		        	updateUI("LEFT");
 		        	playAudio(afdLft);
 		        }
-		        else if (	rotationLogX > 0.31 &&
-		        			rotationLogY > 0.22 &&
+		        else if (	rotationLogX > 0.1 && rotationLogX < 0.6 &&
+		        			rotationLogY > 0.08 && rotationLogY < 0.3 &&
 		        			rotationLogZ > -0.7
 		        		){
 		        	updateUI("RIGHT");
 		        	playAudio(afdRght);
 		        }
-		        else if (	rotationLogX > 0.34 &&
-		        			rotationLogY < -0.48 &&
+		        else if (	rotationLogX > 0.11 && rotationLogX < 0.4 &&
+		        			rotationLogY > -0.48 && rotationLogY < -0.12 &&
 		        			rotationLogZ > -0.65
 		        		){
 		        	updateUI("DOWN");
 		        	playAudio(afdDwn);
 		        }
-		        else if (	rotationLogX < -0.32 &&
-		        			rotationLogY > 0.5 &&
-		        			rotationLogZ > -0.68
+		        else if (	rotationLogX <= -0.04 && rotationLogX > -0.1 &&
+		        			rotationLogY >= 0.09 && rotationLogY < 0.18 &&
+		        			rotationLogZ > -0.8
 		        		){
 		        	updateUI("UP");
 		        	playAudio(afdUp);
